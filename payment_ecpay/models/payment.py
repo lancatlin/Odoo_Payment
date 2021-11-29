@@ -27,7 +27,7 @@ _logger = logging.getLogger(__name__)
 
 class AcquirerEcpay(models.Model):
     _inherit = 'payment.acquirer'
-    provider = fields.Selection(selection_add=[('ecpay', 'Ecpay')])
+    provider = fields.Selection(selection_add=[('ecpay', 'Ecpay')], ondelete={'ecpay': 'cascade'})
 
     MerchantID = fields.Char(
         '特店編號',
@@ -83,7 +83,7 @@ class AcquirerEcpay(models.Model):
         groups='base.group_user',
         required_if_provider='ecpay')
 
-    @api.multi
+    
     def ecpay_form_generate_values(self, values):
         """
         將訂單資料填入表單(form), 將透過 POST 傳至綠界 URL
@@ -169,7 +169,7 @@ class AcquirerEcpay(models.Model):
         ecpay_tx_values['parameters'] = ecpay_payment_sdk.create_order(params)
         return ecpay_tx_values
 
-    @api.model
+    
     def _get_ecpay_urls(self, environment):
         if environment == 'prod':
             return {
@@ -182,7 +182,7 @@ class AcquirerEcpay(models.Model):
                 'ecpay_form_url': 'https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5',
             }
 
-    @api.multi
+    
     def ecpay_get_form_action_url(self):
         """
         綠界接收表單(form)的 URL
@@ -197,7 +197,7 @@ class TxEcpay(models.Model):
 
     ecpay_txn_type = fields.Char('Transaction type')
 
-    @api.model
+    
     def _ecpay_get_sdk(self):
         # 取得 ECPay 的後台設定值
         ecpay_setting = self.env['payment.acquirer'].search(
@@ -211,7 +211,7 @@ class TxEcpay(models.Model):
     # FORM RELATED METHODS
     # --------------------------------------------------
 
-    @api.model
+    
     def _ecpay_form_get_tx_from_data(self, post):
         """
         1. 收到綠界的付款結果訊息，並判斷檢查碼是否相符
@@ -243,12 +243,12 @@ class TxEcpay(models.Model):
         _logger.info(tx)
         return tx
 
-    @api.multi
+    
     def _ecpay_form_get_invalid_parameters(self, data):
         invalid_parameters = []
         return invalid_parameters
 
-    @api.multi
+    
     def _ecpay_form_validate(self, data):
         """
         判斷是否交易成功, 或是交易資訊
@@ -274,7 +274,7 @@ class TxEcpay(models.Model):
         _logger.info(res)
         return self.write(res)
 
-    @api.model
+    
     def ecpay_check_mac_value(self, post):
         # 取得 ECPay 的 SDK
         ecpay_payment_sdk = self._ecpay_get_sdk()

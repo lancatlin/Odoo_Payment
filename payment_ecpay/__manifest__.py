@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 {
-    'name': 'ECPay 綠界第三方金流模組',
+    'name': 'payment_ecpay',
     'category': 'Accounting',
     'summary': 'Payment Acquirer: ECPay 綠界第三方金流模組',
     'version': '1.3',

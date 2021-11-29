@@ -23,7 +23,8 @@ class OrderEcpayModel(models.Model):
         "sale.order",
         string='訂單編號',
         groups='base.group_user',
-        help='訂單編號')
+        help='訂單編號',
+        ondelete='cascade')
     MerchantTradeNo = fields.Char(
         '廠商訂單編號',
         groups='base.group_user',
@@ -93,7 +94,7 @@ class OrderEcpayModel(models.Model):
         groups='base.group_user',
         help='交易訊息')
 
-    @api.multi
+    
     def order_info_record(self, data):
         """
         如果是 ATM、CVS 或 BARCODE, 綠界會將資料送到 _info_notify_url
@@ -125,7 +126,7 @@ class OrderEcpayModel(models.Model):
             })
             return self.create(info_data)
 
-    @api.multi
+    
     def order_record(self, data):
         # 先撈出 MerchantTradeNo 是否在資料庫裏面
         order = self.search(
@@ -144,7 +145,7 @@ class OrderEcpayModel(models.Model):
             })
             return self.create(order_data)
 
-    @api.multi
+    
     def order_paid_record(self, data):
         """
         如果付款完成, 綠界會將資料送到 _notify_url
@@ -189,4 +190,5 @@ class SaleOrder(models.Model):
     ecpay_trade_no_id = fields.Many2one(
         'order.ecpay.model',
         string='綠界金流訂單編號',
-        help='綠界金流訂單編號')
+        help='綠界金流訂單編號',
+        ondelete='cascade')
